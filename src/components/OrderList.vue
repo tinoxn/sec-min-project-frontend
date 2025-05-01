@@ -28,7 +28,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-/* Styles specific to this component */
-</style>

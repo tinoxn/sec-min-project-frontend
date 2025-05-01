@@ -1,21 +1,48 @@
 <template>
-    <div class="container mx-auto mt-10">
-        <h1 class="text-3xl font-bold mb-6">Order Management Dashboard</h1>
-        <ProductList />
+    <div class="min-h-screen bg-blue-50">
+        <div class="max-w-12xl mx-auto p-3">
+            <div class="flex min-h-screen rounded-xl shadow-lg overflow-hidden flex">
+                <!-- Sidebar -->
+                <SideBar />
+                <!-- Main Content -->
+                <main class="flex-1 flex flex-col">
+                    <!-- Header -->
+                    <HeaderBar />
+                    <!-- Body -->
+                    <div class="p-6 flex-1 overflow-y-auto">
+                        <!-- Section Header -->
+                        <div class="flex items-center justify-between mb-6 border-b">
+                            <div class="flex items-center space-x-2 pb-5">
+                                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                </svg>
+                                <h1 class="text-2xl font-semibold text-gray-800">Overview</h1>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <InfoCard />
+                        </div>
+                        <!-- Product list -->
+                        <ProductList />
+                    </div>
+                </main>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import ProductList from '@/components/ProductList.vue'
-
+import SideBar from "@/components/SideBar.vue";
+import HeaderBar from "@/components/HeaderBar.vue";
+import InfoCard from "@/components/InfoCard.vue";
 export default {
-    name: 'HomeView',
     components: {
-        ProductList,
-    },
-};
-</script>
+        SideBar,
+        HeaderBar,
+        InfoCard,
+    }
 
-<style scoped>
-/* Page-specific styles */
-</style>
+}
+</script>
