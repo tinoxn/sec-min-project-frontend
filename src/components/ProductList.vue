@@ -18,12 +18,6 @@ export default {
             products: [],
         };
     },
-    created() {
-        fetch('/api/products')
-            .then((res) => res.json())
-            .then((data) => {
-                this.products = data;
-            });
-    },
+
 };
 </script>
