@@ -53,4 +53,12 @@ export default {
 				return Promise.reject(error);
 			});
 	},
+	getOrders() {
+		return axios
+			.get(`${API_BASE_URL}/api/orders`)
+			.then((response) => response.data)
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	},
 };

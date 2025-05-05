@@ -103,6 +103,10 @@
                                     </button>
                                 </form>
                             </div>
+                            <div class="w-full bg-white rounded-2xl p-6 shadow-sm">
+                                <OrderListing :orders="orders" />
+
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -115,9 +119,11 @@ import { reactive, ref, onMounted, computed } from "vue";
 import SideBar from "@/components/SideBar.vue";
 import HeaderBar from "@/components/HeaderBar.vue";
 import orderService from "@/services/orderService";
+import OrderListing from "@/components/OrderListing.vue";
 import { useToast } from "vue-toast-notification";
 import vSelect from "vue3-select";
 import { debounce } from 'lodash';
+
 
 import "vue-toast-notification/dist/theme-sugar.css";
 import "vue3-select/dist/vue3-select.css";
@@ -126,7 +132,7 @@ export default {
     components: {
         SideBar,
         HeaderBar,
-        vSelect
+        vSelect, OrderListing
     },
 
     setup() {
@@ -156,6 +162,7 @@ export default {
         const products = ref([]);
         const selectedProducts = ref([]);
         const searchQuery = ref('');
+        const orders = ref([]);
 
         // Computed property for filtered products
         const filteredProducts = computed(() => {
@@ -238,9 +245,22 @@ export default {
                 });
             }
         };
+        const fetchOrders = async () => {
+            try {
+                const response = await orderService.getOrders();
+                console.log(response)
+                orders.value = response || [];
+                console.log(orders.value);
+
+            } catch (error) {
+                console.log(error)
+                orders.value = [];
+            }
+        }
 
         onMounted(() => {
             fetchProducts();
+            fetchOrders();
         });
 
         return {
@@ -254,7 +274,8 @@ export default {
             onSearch,
             isLoading,
             fetchProducts,
-            generateCustomerCode
+            generateCustomerCode,
+            fetchOrders, orders
         };
     }
 }
