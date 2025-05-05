@@ -22,4 +22,35 @@ export default {
 				return Promise.reject(error);
 			});
 	},
+	saveOrder(data) {
+		return axios
+			.post(
+				`${API_BASE_URL}/api/orders`,
+				{
+					order_number: data.orderNumber,
+					customer_name: data.customerName,
+					customer_code: data.customerCode,
+					status: "pending",
+					order_date: data.orderDate,
+					items: data.items,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			)
+			.then((response) => response.data)
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	},
+	getProduct() {
+		return axios
+			.get(`${API_BASE_URL}/api/products`)
+			.then((response) => response.data)
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	},
 };

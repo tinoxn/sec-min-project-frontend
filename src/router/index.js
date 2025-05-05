@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import OrderDetails from "../views/OrderDetails.vue";
 import HomeView from "@/views/HomeView.vue";
 import CatalogView from "@/views/CatalogView.vue";
+import OrderView from "@/views/OrderView.vue";
 
 const routes = [
 	{
@@ -14,6 +15,11 @@ const routes = [
 		name: "OrderDetails",
 		component: OrderDetails,
 		props: true,
+	},
+	{
+		path: "/order",
+		name: "OrderManagement",
+		component: OrderView,
 	},
 	{
 		path: "/catalog",
