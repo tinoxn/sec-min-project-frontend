@@ -73,7 +73,7 @@
 
                             <!-- Product list section -->
                             <div class="w-full bg-white rounded-2xl p-6 shadow-sm">
-                                <ProductList />
+                                <ProductList :products="products || []" />
                             </div>
                         </div>
                     </div>
@@ -82,9 +82,8 @@
         </div>
     </div>
 </template>
-
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import SideBar from "@/components/SideBar.vue";
 import HeaderBar from "@/components/HeaderBar.vue";
 import ProductList from "@/components/ProductList.vue";
@@ -104,8 +103,19 @@ export default {
             name: '',
             price: '',
         });
+        const products = ref([]); // Better to use ref for arrays
         const isLoading = ref(false);
         const toast = useToast();
+
+        const fetchProducts = async () => {
+            try {
+                const response = await orderService.getProduct();
+                products.value = response; // Assuming response has data property
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                products.value = [];
+            }
+        };
 
         const createProduct = async () => {
             isLoading.value = true;
@@ -119,13 +129,14 @@ export default {
                     duration: 3000
                 });
 
-                // Reset form after successful submission
+                // Reset form
                 product.name = '';
                 product.price = '';
+
+                // Refresh product list
+                await fetchProducts();
             } catch (error) {
                 console.error("Error saving product:", error);
-
-                // Show error toast
                 toast.error('Failed to create product. Please try again.', {
                     position: 'top-right',
                     duration: 3000
@@ -135,10 +146,17 @@ export default {
             }
         };
 
+        // Fetch products when component mounts
+        onMounted(() => {
+            fetchProducts();
+        });
+
         return {
             product,
+            products,
             createProduct,
-            isLoading
+            isLoading,
+            fetchProducts
         };
     }
 }
