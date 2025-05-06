@@ -1,17 +1,21 @@
 <template>
     <div class="flex items-center justify-between">
-        <!-- search bar -->
+        <!-- Search bar component to filter orders by search term -->
         <SearchForm @search="handleSearch" />
         <div class="flex items-center justify-end text-sm font-semibold">
+            <!-- Radio filter for filtering orders by specific criteria (e.g., today, past) -->
             <RadioFilter @filter="handleRadioFilter" />
+            <!-- Dropdown filter to filter orders based on selected statuses -->
             <DropDownFilter :orders="orders" @filter="handleCheckBoxFilter" />
         </div>
-        <!-- radio button -->
     </div>
+
+    <!-- Table displaying filtered orders -->
     <div>
         <table v-if="filteredOrders && filteredOrders.length > 0" class="min-w-full">
             <thead>
                 <tr>
+                    <!-- Table headers for Order Number, Customer, Status, Date, and Actions -->
                     <th class="px-4 py-2 text-left">Order Number</th>
                     <th class="px-4 py-2 text-left">Customer</th>
                     <th class="px-4 py-2 text-left">Status</th>
@@ -20,12 +24,14 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- Iterate over filtered orders and display each order's details -->
                 <tr v-for="order in filteredOrders" :key="order.id" class="border-t">
                     <td class="px-4 py-2 text-left">{{ order.order_number }}</td>
                     <td class="px-4 py-2 text-left">{{ order.customer_name }}</td>
                     <td class="px-4 py-2 text-left">{{ order.status }}</td>
                     <td class="px-4 py-2 text-left">{{ order.order_date }}</td>
                     <td class="px-4 py-2 text-left">
+                        <!-- Button to view order details -->
                         <button @click="showOrderDetails(order)" class="inline-block focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16"
                                 height="16" class="hover:text-blue-500 transition-colors">
@@ -39,14 +45,17 @@
                 </tr>
             </tbody>
         </table>
+
+        <!-- Message when no orders are found -->
         <div v-else class="p-4 text-center text-gray-500">
             No orders found
         </div>
 
-        <!-- Order Details Modal -->
+        <!-- Modal to show details of the selected order -->
         <div v-if="selectedOrder"
             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <!-- Modal header with close button -->
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="text-xl font-bold">Order Details</h2>
                     <button @click="selectedOrder = null" class="text-gray-500 hover:text-gray-700">
@@ -58,6 +67,7 @@
                     </button>
                 </div>
 
+                <!-- Order and customer information section -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h3 class="font-semibold mb-2">Order Information</h3>
@@ -76,6 +86,7 @@
                     </div>
                 </div>
 
+                <!-- Order items table section -->
                 <div class="mt-6" v-if="selectedOrder.items && selectedOrder.items.length > 0">
                     <h3 class="font-semibold mb-2">Order Items</h3>
                     <table class="min-w-full">
@@ -88,6 +99,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Iterate over order items and display details -->
                             <tr v-for="(item, index) in selectedOrder.items" :key="index" class="border-b">
                                 <td class="py-2">{{ item.product.name }}</td>
                                 <td class="py-2">{{ item.quantity }}</td>
@@ -98,12 +110,16 @@
                     </table>
                 </div>
 
+                <!-- Display the total of the order -->
                 <div class="mt-4 text-right">
                     <p class="font-semibold">Order Total: ${{ calculateOrderTotal(selectedOrder) }}</p>
                 </div>
+
+                <!-- Section to update order status and delete order -->
                 <div class="mt-6 border-t pt-4">
                     <h3 class="font-semibold mb-2">Update Status</h3>
                     <div class="flex items-center space-x-4">
+                        <!-- Dropdown to select and update order status -->
                         <select v-model="selectedOrder.status" @change="updateOrderStatus"
                             class="border rounded px-3 py-2 w-full md:w-auto">
                             <option value="pending">Pending</option>
@@ -111,6 +127,8 @@
                             <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
+
+                        <!-- Button to delete the order -->
                         <button @click="confirmDeleteOrder"
                             class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded whitespace-nowrap">
                             Delete Order
