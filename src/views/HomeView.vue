@@ -21,11 +21,13 @@
                                 <h1 class="text-2xl font-semibold text-gray-800">Overview</h1>
                             </div>
                         </div>
-                        <div class="flex">
-                            <InfoCard />
+                        <div class="flex gap-6">
+                            <InfoCard title="Number of Products" :value="productCount" unit="Products" class="w-full">
+                            </InfoCard>
+                            <InfoCard title="Number of Orders" :value="orderCount" unit="Orders" :trend="orderTrend"
+                                trendText="Last 7 days" class="w-full" />
+
                         </div>
-                        <!-- Product list -->
-                        <ProductList />
                     </div>
                 </main>
             </div>
@@ -37,11 +39,45 @@
 import SideBar from "@/components/SideBar.vue";
 import HeaderBar from "@/components/HeaderBar.vue";
 import InfoCard from "@/components/InfoCard.vue";
+import orderService from "@/services/orderService";
+orderService
 export default {
     components: {
         SideBar,
         HeaderBar,
         InfoCard,
+    }, data() {
+        return {
+            productCount: 0,
+            orderCount: 0,
+            orderTrend: 0
+        };
+    },
+    methods: {
+        async fetchProduct() {
+            try {
+                const response = await orderService.getProduct();
+                this.productCount = response.length;
+            } catch (error) {
+                console.error("Error fetching products:", error);
+                this.productCount = 0;
+            }
+        },
+        async fetchOrder() {
+            try {
+                const response = await orderService.getOrders();
+                this.orderCount = response.length;
+                // Calculate trend if needed
+                // this.orderTrend = calculateTrend(response);
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+                this.orderCount = 0;
+            }
+        }
+    },
+    created() {
+        this.fetchProduct();
+        this.fetchOrder();
     }
 
 }

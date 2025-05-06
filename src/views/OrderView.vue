@@ -64,7 +64,7 @@
                                             :reduce="product => product.id" multiple searchable :filterable="false"
                                             @search="onSearch" @update:modelValue="updateSelectedProducts"
                                             placeholder="Type to search products..."
-                                            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                            class="w-full p-2  rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                                             <template #option="{ name, price }">
                                                 <div class="flex justify-between">
                                                     <span>{{ name }}</span>
@@ -86,7 +86,7 @@
                                     </div>
 
                                     <!-- Submit Button -->
-                                    <button type="submit" :disabled="isLoading"
+                                    <button type="submit" :disabled="isLoading || products.length === 0"
                                         class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors shadow-md w-full mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span v-if="!isLoading">Process Order</span>
                                         <span v-else class="flex items-center justify-center">

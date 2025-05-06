@@ -2,6 +2,7 @@ import axios from "axios";
 const API_BASE_URL = process.env.VUE_APP_API_BASE_URL;
 
 export default {
+	// method to save product
 	saveProduct(productInfo) {
 		return axios
 			.post(
@@ -22,6 +23,7 @@ export default {
 				return Promise.reject(error);
 			});
 	},
+	// method to save orders
 	saveOrder(data) {
 		return axios
 			.post(
@@ -45,6 +47,7 @@ export default {
 				return Promise.reject(error);
 			});
 	},
+	// method to fetch products
 	getProduct() {
 		return axios
 			.get(`${API_BASE_URL}/api/products`)
@@ -53,9 +56,38 @@ export default {
 				return Promise.reject(error);
 			});
 	},
+	// method to fetch orders
 	getOrders() {
 		return axios
 			.get(`${API_BASE_URL}/api/orders`)
+			.then((response) => response.data)
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	},
+	// method to update status
+	updateStatus(data) {
+		return axios
+			.put(
+				`${API_BASE_URL}/api/orders/${data.orderId}`,
+				{
+					status: data.status,
+				},
+				{
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			)
+			.then((response) => response.data)
+			.catch((error) => {
+				return Promise.reject(error);
+			});
+	},
+	// method to delete order
+	deleteOrder(id) {
+		return axios
+			.delete(`${API_BASE_URL}/api/orders/${id}`)
 			.then((response) => response.data)
 			.catch((error) => {
 				return Promise.reject(error);
