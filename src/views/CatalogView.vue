@@ -1,20 +1,22 @@
 <template>
     <div class="min-h-screen bg-blue-50">
+        <!-- Main container -->
         <div class="max-w-12xl mx-auto p-4">
             <div class="flex min-h-screen rounded-xl shadow-lg overflow-hidden">
-                <!-- Sidebar -->
+                <!-- Sidebar component -->
                 <SideBar />
                 <!-- Main Content -->
                 <main class="flex-1 flex flex-col">
-                    <!-- Header -->
+                    <!-- Header bar component -->
                     <HeaderBar />
-                    <!-- Body -->
+                    <!-- Body section -->
                     <div class="p-6 flex-1 overflow-y-auto">
-                        <!-- Section Header -->
+                        <!-- Section header -->
                         <div class="flex items-center justify-between mb-6 border-b pb-4">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Icon for catalog section -->
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                                 </svg>
@@ -22,10 +24,12 @@
                             </div>
                         </div>
 
+                        <!-- Main content sections (Form and product list) -->
                         <div class="flex flex-col lg:flex-row gap-6">
-                            <!-- Form section -->
+                            <!-- Form to create new product -->
                             <div class="w-full lg:max-w-3xl bg-white rounded-2xl p-6 shadow-sm">
                                 <form @submit.prevent="createProduct" class="space-y-4">
+                                    <!-- Product name field -->
                                     <div>
                                         <div class="flex items-center space-x-2 mb-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600"
@@ -39,6 +43,7 @@
                                             class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" />
                                     </div>
 
+                                    <!-- Product price field -->
                                     <div>
                                         <div class="flex items-center space-x-2 mb-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600"
@@ -59,6 +64,7 @@
                                         <span v-else class="flex items-center justify-center">
                                             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <!-- Loading spinner when submitting -->
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                                     stroke-width="4"></circle>
                                                 <path class="opacity-75" fill="currentColor"
@@ -73,7 +79,7 @@
 
                             <!-- Product list section -->
                             <div class="w-full bg-white rounded-2xl p-6 shadow-sm">
-                                <ProductList />
+                                <ProductList :products="products || []" />
                             </div>
                         </div>
                     </div>
@@ -84,7 +90,7 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import SideBar from "@/components/SideBar.vue";
 import HeaderBar from "@/components/HeaderBar.vue";
 import ProductList from "@/components/ProductList.vue";
@@ -93,6 +99,7 @@ import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 
 export default {
+    // Register components used in this template
     components: {
         SideBar,
         HeaderBar,
@@ -100,45 +107,70 @@ export default {
     },
 
     setup() {
+        // Reactive state for the product form data
         const product = reactive({
             name: '',
             price: '',
         });
-        const isLoading = ref(false);
-        const toast = useToast();
+        // Ref for storing fetched products
+        const products = ref([]);
+        const isLoading = ref(false); // State to track loading state for form submission
+        const toast = useToast(); // Toast notifications
 
-        const createProduct = async () => {
-            isLoading.value = true;
+        // Function to fetch products from the API
+        const fetchProducts = async () => {
             try {
-                const response = await orderService.saveProduct(product);
+                const response = await orderService.getProduct(); // Fetch products
+                products.value = response; // Store products data
+            } catch (error) {
+                console.error("Error fetching products:", error); // Handle errors
+                products.value = []; // Set products to empty in case of error
+            }
+        };
+
+        // Function to handle creating a new product
+        const createProduct = async () => {
+            isLoading.value = true; // Set loading state
+            try {
+                const response = await orderService.saveProduct(product); // Send request to save product
                 console.log(response.data);
 
-                // Show success toast
+                // Show success notification
                 toast.success('Product created successfully!', {
                     position: 'top-right',
                     duration: 3000
                 });
 
-                // Reset form after successful submission
+                // Reset form fields
                 product.name = '';
                 product.price = '';
+
+                // Refresh product list after creating a product
+                await fetchProducts();
             } catch (error) {
                 console.error("Error saving product:", error);
-
-                // Show error toast
+                // Show error notification
                 toast.error('Failed to create product. Please try again.', {
                     position: 'top-right',
                     duration: 3000
                 });
             } finally {
-                isLoading.value = false;
+                isLoading.value = false; // Reset loading state
             }
         };
 
+        // Fetch products when the component is mounted
+        onMounted(() => {
+            fetchProducts();
+        });
+
+        // Return reactive and ref values to the template
         return {
             product,
+            products,
             createProduct,
-            isLoading
+            isLoading,
+            fetchProducts
         };
     }
 }
